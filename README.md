@@ -4,7 +4,7 @@
 
 Diet is one of the most important determinants of gut microbiome composition. Long-term dietary patterns produce distinct and reproducible microbial signatures, with omnivore-associated microbiomes enriched in taxa involved in protein and fat metabolism, and plant-based microbiomes enriched in fiber-degrading bacteria that produce short-chain fatty acids (SCFAs) such as butyrate (Sonnenburg & Bäckhed, 2016; Fackelmann et al., 2025). De Filippis et al. (2019) characterized the gut metagenomes of 97 Italian adults following omnivore, vegetarian, or vegan diets, demonstrating that dietary habit drives strain-level selection in key taxa such as *Prevotella copri*, with vegan-associated strains enriched in genes for complex carbohydrate degradation and omnivore-associated strains showing higher prevalence of branched-chain amino acid (BCAA) biosynthesis genes linked to insulin resistance and type 2 diabetes risk. The raw sequencing data from this cohort (NCBI SRA: SRP126540) provides the foundation for the present analysis.
 
-This study applies shotgun metagenomics to a subset of the De Filippis et al. (2019) dataset (three vegan and three omnivore samples)to perform taxonomic classification, compare community diversity between dietary groups, and identify differentially abundant taxa. Unlike 16S rRNA amplicon sequencing, shotgun metagenomics sequences all DNA in a sample, enabling species- and strain-level resolution as well as functional profiling (Quince et al., 2017). Raw reads were processed with fastp (Chen et al., 2018) for quality control and adapter trimming, chosen for its speed and ability to perform QC and trimming in a single pass with automatic adapter detection. Taxonomic classification was performed using Kraken2 (Wood et al., 2019), a k-mer-based classifier offering high speed and accuracy, followed by Bracken (Lu et al., 2017) to re-estimate species-level abundances from Kraken2 output. Community diversity was analyzed in R using phyloseq (McMurdie & Holmes, 2013) for taxonomic abundance visualization and alpha diversity, vegan (Oksanen et al., 2022) for beta diversity analysis via Bray-Curtis dissimilarity and PERMANOVA, and DESeq2 (Love et al., 2014) for differential abundance analysis. While newer compositional methods such as ANCOM-BC2 offer improved false discovery rate control in large microbiome datasets, DESeq2's negative binomial model is better suited to the small sample sizes used here (n=3 per group), where more conservative compositional approaches may lack the statistical power to detect biologically meaningful differences. DESeq2 remains widely used and well-validated for microbiome differential abundance at low sample sizes (McMurdie & Holmes, 2014).
+This study applies shotgun metagenomics to a subset of the De Filippis et al. (2019) dataset (three vegan and three omnivore samples)to perform taxonomic classification, compare community diversity between dietary groups, and identify differentially abundant taxa. Unlike 16S rRNA amplicon sequencing, shotgun metagenomics sequences all DNA in a sample, enabling species and strain-level resolution as well as functional profiling (Quince et al., 2017). Raw reads were processed with fastp (Chen et al., 2018) for quality control and adapter trimming, chosen for its speed and ability to perform QC and trimming in a single pass with automatic adapter detection. Taxonomic classification was performed using Kraken2 (Wood et al., 2019), a k-mer-based classifier offering high speed and accuracy, followed by Bracken (Lu et al., 2017) to re-estimate species-level abundances from Kraken2 output. Community diversity was analyzed in R using phyloseq (McMurdie & Holmes, 2013) for taxonomic abundance visualization and alpha diversity, vegan (Oksanen et al., 2022) for beta diversity analysis via Bray-Curtis dissimilarity and PERMANOVA, and DESeq2 (Love et al., 2014) for differential abundance analysis. While newer compositional methods such as ANCOM-BC2 offer improved false discovery rate control in large microbiome datasets, DESeq2's negative binomial model is better suited to the small sample sizes used here (n=3 per group), where more conservative compositional approaches may lack the statistical power to detect biologically meaningful differences. DESeq2 remains widely used and well-validated for microbiome differential abundance at low sample sizes (McMurdie & Holmes, 2014).
 
 # Methods
 
@@ -55,6 +55,130 @@ All code is provided in `scripts/04_diversity.R`.
 Differential abundance between vegan and omnivore groups was assessed using DESeq2 (VERSION; Love et al., 2014). Raw Bracken species-level counts were used as input without prior rarefaction, as DESeq2 handles library size differences through its internal normalization procedure (McMurdie & Holmes, 2014). Preliminary analysis without taxonomic filtering revealed a high proportion of significantly differentially abundant taxa belonging to environmental genera (e.g., marine bacteria, soil organisms, plant pathogens) that are not plausible members of the human gut microbiome. These represent known Kraken2 false positives arising from the broad taxonomic scope of the standard reference database. To address this, taxa were filtered prior to analysis to retain only species belonging to genera represented in the Unified Human Gastrointestinal Genome catalogue (Almeida et al., 2021). A design formula of `~ diet_group` was used with Omnivore as the reference level.
 
 Preliminary DESeq2 results showed that Cook's distance filtering flagged approximately 16% of taxa as outliers, which is a consequence of the small sample size (n=3) rather than true outliers. As such, the threshold was disabled (`cooksCutoff = FALSE`) to recover potentially real biological signals. Additionally, preliminary results showed extreme log2 fold changes (>±20) for several taxa, characteristic of zero-inflation where a taxon is present in one group and absent in the other. Log2 fold changes were therefore shrunk using the apeglm method (Zhu et al., 2018) to stabilize estimates for low-count taxa. Following inspection of the Bracken abundance table, several DESeq2-significant taxa with high LFCs were found to have zero or near-zero Bracken-estimated reads across all samples, indicating these signals arise from very low-level Kraken2 classifications below Bracken's re-estimation threshold; these are noted as a limitation in the Discussion. Wald test p-values were adjusted for multiple comparisons using the Benjamini-Hochberg procedure. Taxa with adjusted p-value < 0.05 and |log2 fold change| > 1 after shrinkage were considered differentially abundant. Results were visualized as an MA plot and a ranked bar plot of significant taxa. All code is provided in `scripts/05_deseq2.R`.
+
+# Results
+
+## Taxonomic Classification
+
+Shotgun metagenomic sequencing yielded between 37.7 and 91.5 million read pairs per sample after quality trimming with fastp. Kraken2 classification against the k2_standard_08GB database produced variable classification rates across samples, ranging from 32.3% to 66.1% of reads (Table 1). Omnivore_3 (SRR8146938) had the lowest classification rate at 32.3%, substantially below the cohort mean of 52.0%. Human-derived reads (*Homo sapiens*) accounted for less than 0.02% of classified reads in all samples. Following Bracken abundance re-estimation and filtering to gut-associated genera, 440 species-level taxa were retained across all six samples for downstream analysis.
+
+
+**Table 1. Kraken2 classification summary per sample.** Total read pairs reflect post-fastp trimmed counts. Classification rates represent the percentage of reads assigned to any taxon in the k2_standard_08GB database.
+
+| Sample | Diet Group | Total Read Pairs | Classified (%) | Unclassified (%) |
+|---|---|---|---|---|
+| SRR8146968 (Vegan_1) | Vegan | 40,484,434 | 66.1% | 33.9% |
+| SRR8146978 (Vegan_2) | Vegan | 40,141,260 | 55.9% | 44.1% |
+| SRR8146982 (Vegan_3) | Vegan | 42,552,753 | 50.2% | 49.8% |
+| SRR8146935 (Omnivore_1) | Omnivore | 39,137,854 | 43.9% | 56.1% |
+| SRR8146936 (Omnivore_2) | Omnivore | 37,822,577 | 63.6% | 36.4% |
+| SRR8146938 (Omnivore_3) | Omnivore | 44,851,414 | 32.3% | 67.7% |
+
+The most abundant species varied considerably across samples (Table 2). *Segatella copri* was the dominant species in two vegan samples (Vegan_2: 63.5%, Vegan_3: 33.4%) and two omnivore samples (Omnivore_1: 42.6%, Omnivore_3: 72.8%), while it was essentially absent in Vegan_1 (<0.1%) and Omnivore_2 (1.5%). *Faecalibacterium prausnitzii* appeared among the top five species in four of six samples. *Alistipes putredinis* was present across both groups with no consistent dietary pattern.
+
+
+**Table 2. Top five most abundant species per sample (% of total classified reads).** Species are ranked by relative abundance within each sample.
+
+| Sample | Rank 1 | Rank 2 | Rank 3 | Rank 4 | Rank 5 |
+|---|---|---|---|---|---|
+| Vegan_1 | *Segatella copri* (27.0%) | *Alistipes putredinis* (6.9%) | *Sutterella wadsworthensis* (3.8%) | *Parabacteroides merdae* (2.4%) | *Acidaminococcus intestini* (2.0%) |
+| Vegan_2 | *Bacteroides uniformis* (8.1%) | *Faecalibacterium prausnitzii* (4.2%) | *Alistipes finegoldii* (2.5%) | *Alistipes putredinis* (1.7%) | *Sutterella wadsworthensis* (1.6%) |
+| Vegan_3 | *Segatella copri* (33.4%) | *Segatella hominis* (3.0%) | *Faecalibacterium prausnitzii* (1.9%) | *Alistipes shahii* (0.3%) | *Faecalibacterium* sp. I4-1-79 (0.3%) |
+| Omnivore_1 | *Faecalibacterium prausnitzii* (4.3%) | *Alistipes putredinis* (3.9%) | *Alistipes onderdonkii* (2.8%) | *Faecalibacterium* sp. I3-3-89 (2.6%) | *Phocaeicola vulgatus* (2.0%) |
+| Omnivore_2 | *Segatella copri* (38.1%) | *Sutterella faecalis* (4.0%) | *Phascolarctobacterium succinatutens* (2.9%) | *Phocaeicola vulgatus* (2.0%) | *Alistipes onderdonkii* (1.5%) |
+| Omnivore_3 | *Faecalibacterium prausnitzii* (2.6%) | *Bacteroides stercoris* (1.2%) | *Bacteroides uniformis* (1.1%) | *Alistipes putredinis* (1.0%) | *Alistipes onderdonkii* (0.9%) |
+
+## Taxonomic Abundance
+
+At the phylum level, all six samples were dominated by Bacteroidota and Firmicutes (Figure 1). Bacteroidota comprised the majority of classified reads across all omnivore samples. Among vegan samples, Vegan_1 and Vegan_3 showed notably higher relative Firmicutes abundance compared to omnivore samples, while Vegan_2 was almost entirely composed of Bacteroidota. Actinobacteriota was present in vegan samples but was nearly absent in omnivores. Minor contributions from Proteobacteria, Verrucomicrobiota, and Fusobacteriota were observed across both groups.
+
+<img width="3000" height="2100" alt="taxonomic_abundance" src="https://github.com/user-attachments/assets/3227b242-3523-4806-bc7a-abe8a1839818" />
+
+**Figure 1. Phylum-level taxonomic abundance across all six samples.** Stacked bar plots show relative abundance of major bacterial phyla, faceted by dietary group. Taxa not assignable to a known phylum are grouped as "Other."
+
+At the species level, the top 10 most abundant species collectively accounted for 56–81% of classified reads per sample (Figure 2). *Segatella copri* was the single most abundant species overall, dominating Omnivore_3 (72.8%) and Vegan_2 (63.5%) while being virtually absent from the remaining four samples. *Faecalibacterium prausnitzii* and multiple *Alistipes* species (*A. putredinis*, *A. onderdonkii*) were consistently present across samples from both groups, while *Bacteroides uniformis* was disproportionately abundant in Omnivore_2 (29.3%).
+
+<img width="3000" height="2100" alt="top10_species_bar" src="https://github.com/user-attachments/assets/01a826fc-cc41-47a8-b133-e49067a5d70b" />
+
+**Figure 2. Relative abundance of the top 10 most abundant species per sample.** Species are ranked by mean abundance across all six samples. Bars represent the fraction of total classified reads assigned to each species. Remaining taxa not shown collectively comprise 19–44% of reads per sample. Samples are faceted by dietary group.
+
+The hierarchical clustering of species-level relative abundance across all 30 most abundant taxa revealed that samples did not cluster strictly by dietary group (Figure 3). Vegan_2 clustered with the three omnivore samples rather than with the other vegan samples, driven by its high *S. copri* abundance. Vegan_1 and Vegan_3 formed a distinct cluster characterised by higher *Faecalibacterium* and *Alistipes* species abundance and lower *S. copri*. A cluster of *Faecalibacterium* species, *Agathobacter rectalis*, *Bifidobacterium adolescentis*, and *Collinsella aerofaciens* showed higher abundance in Vegan_1 relative to all other samples.
+
+<img width="3000" height="2700" alt="heatmap_top30" src="https://github.com/user-attachments/assets/db67b78c-3374-4baf-a9ba-1a1635df74ca" />
+
+**Figure 3. Heatmap of the top 30 most abundant species across all six samples.** Values represent log10-transformed relative abundance. Both rows (species) and columns (samples) are hierarchically clustered using complete linkage. The annotation bar indicates dietary group assignment. Darker blue indicates higher relative abundance.
+
+## Alpha Diversity
+
+Observed species richness, Shannon diversity, and Simpson's diversity index were calculated for each sample (Figure 4). Vegan samples showed a trend toward higher diversity across all three metrics: median observed richness was 3,008 (range: 1,344–4,481) in vegans versus 1,896 (range: 1,871–2,609) in omnivores; median Shannon diversity was 3.60 (range: 1.82–4.16) versus 2.65 (range: 1.46–3.18); and median Simpson's index was 0.935 (range: 0.586–0.961) versus 0.793 (range: 0.460–0.887). None of these differences reached statistical significance by Wilcoxon rank-sum test (Observed richness: W = 3, p = 0.7; Shannon diversity: W = 2, p = 0.4). Vegan_2 and Omnivore_3 had the lowest diversity values within their respective groups, with Shannon diversity of 1.82 and 1.46 respectively.
+
+<img width="2400" height="1500" alt="alpha_diversity" src="https://github.com/user-attachments/assets/9a7f2846-8e37-47eb-b501-336cd8cc1191" />
+
+**Figure 4. Alpha diversity metrics by dietary group.** Boxplots show the distribution of observed species richness, Shannon diversity index, and Simpson's diversity index across the three vegan and three omnivore samples. Individual data points are overlaid. No statistically significant differences were detected between groups by Wilcoxon rank-sum test.
+
+## Beta Diversity
+
+PCoA of Bray-Curtis dissimilarity showed that PC1 explained 61.2% of total variance and PC2 explained 18.2% (Figure 5). Vegan_1 and Vegan_3 were positioned in the positive PC1 region. Omnivore_2 was positioned in the negative PC1 region alongside Vegan_2, distant from the other omnivore samples. PERMANOVA found no statistically significant difference in community composition between dietary groups (F = 0.68, R² = 0.15, p = 0.6, 999 permutations).
+
+<img width="2100" height="1800" alt="beta_diversity_pcoa" src="https://github.com/user-attachments/assets/cfd573c4-64b0-4cc1-975e-3d325217feaa" />
+
+**Figure 5. Beta diversity PCoA based on Bray-Curtis dissimilarity.** Each point represents one sample, coloured by dietary group. PC1 explains 61.2% of variance and PC2 explains 18.2%. PERMANOVA p-value is annotated. Samples that did not cluster by dietary group are labelled.
+
+*Segatella copri* relative abundance ranged from <0.1% to 72.8% across all samples (Figure 6). Median abundance was 42.6% in omnivores (range: 1.5–72.8%) and 0.3% in vegans (range: <0.1–63.5%). The Wilcoxon rank-sum test found no significant difference between groups (W = 4, p = 1.0).
+
+<img width="1800" height="1800" alt="segatella_copri_abundance" src="https://github.com/user-attachments/assets/6ead7646-2b96-4301-8782-abbd3b2c5b4c" />
+
+**Figure 6. *Segatella copri* relative abundance by dietary group.** Boxplots show the distribution of *S. copri* fractional abundance in vegans and omnivores. Individual samples are labelled. Wilcoxon rank-sum test p-value is annotated (p = 1.0), indicating no significant difference between dietary groups.
+
+## Differential Abundance
+
+DESeq2 with apeglm LFC shrinkage identified 28 significantly differentially abundant taxa at adjusted p < 0.05 (19 enriched in vegans, 9 in omnivores). All 28 taxa are summarised in Table 3, including a Bracken-detectability flag (maximum fractional abundance > 0.01% in any sample) used to distinguish biologically detectable signals from low-level Kraken2 classifications below Bracken's re-estimation threshold. Of the 28 significant taxa, 18 were flagged as non-detectable by this criterion.
+
+Six taxa met the additional |log2 fold change| > 1 threshold and are visualised in Figures 7 and 8. Four taxa were enriched in vegans: *Fusobacterium polymorphum* (log2FC = 11.07, padj = 1.77 × 10⁻⁴), *Sutterella faecalis* (log2FC = 9.80, padj = 6.24 × 10⁻⁴), *Bifidobacterium imperatoris* (log2FC = 9.57, padj = 1.43 × 10⁻³), and *Clostridium* sp. C1 (log2FC = 9.33, padj = 1.86 × 10⁻⁴). Two taxa were enriched in omnivores: *Ruminococcus callidus* (log2FC = −5.46, padj = 7.07 × 10⁻⁴) and *Alistipes megaguti* (log2FC = −4.59, padj = 1.61 × 10⁻²). Of these six, three were Bracken-detectable: *Sutterella faecalis* (maximum 6.60% in Vegan_2, absent in all other samples), *Ruminococcus callidus* (0.026–0.262% across all three omnivore samples), and *Alistipes megaguti* (maximum 1.58% in Omnivore_1). The remaining three large-effect taxa (*Fusobacterium polymorphum*, *Bifidobacterium imperatoris*, *Clostridium* sp. C1) had maximum Bracken-estimated abundances of <0.002% and are considered non-detectable.
+
+Among the 22 remaining significant taxa with |LFC| < 1, nine *Fusobacterium* species were consistently enriched in vegans, including *F. nucleatum* (LFC = 0.35, padj = 5.23 × 10⁻¹²) and *F. ulcerans* (LFC = 0.31, padj = 5.23 × 10⁻¹²). *Bifidobacterium fermentum* (LFC = 0.34, padj = 4.25 × 10⁻¹⁰) was also enriched in vegans. Taxa enriched in omnivores at smaller effect sizes included *Enterococcus hirae*, two *Bacteroides* phages, *Phascolarctobacterium faecium*, and *Megasphaera* sp.
+
+<img width="2400" height="1800" alt="ma_plot" src="https://github.com/user-attachments/assets/750fb588-2e5b-484a-bd99-c5f6ddee9f1c" />
+
+**Figure 7. MA plot of DESeq2 differential abundance results.** Each point represents one species from the filtered gut taxa set (n = 440). The x-axis shows mean abundance (log10) and the y-axis shows the apeglm-shrunk log2 fold change (positive = enriched in vegans). Significantly differentially abundant taxa meeting both padj < 0.05 and |LFC| > 1 thresholds are coloured and labelled. The dashed horizontal line indicates log2FC = 0.
+
+<img width="2700" height="1800" alt="differential_abundance" src="https://github.com/user-attachments/assets/82fc1f2e-8544-43b9-9a55-51d8e4346c2f" />
+
+**Figure 8. Ranked bar plot of significantly differentially abundant taxa (|LFC| > 1, padj < 0.05).** Bars show apeglm-shrunk log2 fold change values. Green bars indicate enrichment in vegans; red bars indicate enrichment in omnivores. Species are ordered by log2 fold change magnitude.
+
+
+**Table 3. All 28 significantly differentially abundant taxa (DESeq2 with apeglm shrinkage, padj < 0.05).** Positive log2FC indicates enrichment in vegans; negative log2FC indicates enrichment in omnivores. Bracken-detectable indicates whether the taxon had a maximum fractional abundance > 0.01% in any sample.
+
+| Species | log2FC | padj | Enriched in | Bracken-detectable |
+|---|---|---|---|---|
+| *Fusobacterium polymorphum* | 11.07 | 1.77 × 10⁻⁴ | Vegan | No |
+| *Sutterella faecalis* | 9.80 | 6.24 × 10⁻⁴ | Vegan | Yes |
+| *Bifidobacterium imperatoris* | 9.57 | 1.43 × 10⁻³ | Vegan | No |
+| *Clostridium* sp. C1 | 9.33 | 1.86 × 10⁻⁴ | Vegan | No |
+| *Akkermansia* sp. JRP_AM1 | 0.47 | 1.61 × 10⁻² | Vegan | No |
+| *Fusobacterium nucleatum* | 0.35 | 5.23 × 10⁻¹² | Vegan | No |
+| *Bifidobacterium fermentum* | 0.34 | 4.25 × 10⁻¹⁰ | Vegan | No |
+| *Fusobacterium varium* | 0.32 | 4.85 × 10⁻² | Vegan | Yes |
+| *Fusobacterium ulcerans* | 0.31 | 5.23 × 10⁻¹² | Vegan | Yes |
+| *Fusobacterium mortiferum* | 0.26 | 2.04 × 10⁻² | Vegan | Yes |
+| *Bacteroides* sp. KG68 | 0.25 | 2.92 × 10⁻¹⁰ | Vegan | Yes |
+| *Fusobacterium* sp. SB021 | 0.25 | 3.36 × 10⁻⁹ | Vegan | Yes |
+| *Fusobacterium vincentii* | 0.24 | 3.36 × 10⁻⁹ | Vegan | No |
+| *Fusobacterium hominis* | 0.24 | 3.36 × 10⁻⁹ | Vegan | No |
+| *Fusobacterium animalis* | 0.24 | 1.74 × 10⁻⁸ | Vegan | No |
+| *Ruminococcus* sp. FMB-CY1 | 0.24 | 1.32 × 10⁻⁸ | Vegan | Yes |
+| *Clostridium* sp. MB05 | 0.23 | 1.93 × 10⁻⁶ | Vegan | No |
+| *Bacteroides* sp. BFG-257 | 0.23 | 1.93 × 10⁻⁶ | Vegan | No |
+| *Akkermansia* sp. RCC_12PD | 0.23 | 6.87 × 10⁻⁶ | Vegan | No |
+| *Enterococcus hirae* | −0.22 | 4.16 × 10⁻⁷ | Omnivore | No |
+| *Bacteroides* phage B40-8 | −0.22 | 3.13 × 10⁻⁸ | Omnivore | No |
+| *Bacteroides* phage B124-14 | −0.22 | 2.88 × 10⁻⁸ | Omnivore | No |
+| *Enterococcus* sp. 22-H-5-01 | −0.42 | 2.51 × 10⁻² | Omnivore | No |
+| *Bacteroides* sp. ZJ-18 | −0.43 | 2.03 × 10⁻² | Omnivore | No |
+| *Phascolarctobacterium faecium* | −0.77 | 4.89 × 10⁻² | Omnivore | Yes |
+| *Megasphaera* sp. | −0.79 | 4.85 × 10⁻² | Omnivore | Yes |
+| *Alistipes megaguti* | −4.59 | 1.61 × 10⁻² | Omnivore | Yes |
+| *Ruminococcus callidus* | −5.46 | 7.07 × 10⁻⁴ | Omnivore | Yes |
 
 
 ## References
