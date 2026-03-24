@@ -14,7 +14,7 @@ Raw shotgun metagenomic sequencing data were obtained from the NCBI Sequence Rea
 
 ## Quality Control and Adapter Trimming
 
-Raw reads were assessed and trimmed using fastp (v1.3.0; Chen et al., 2018). fastp was run on paired-end reads with default parameters, which include automatic adapter detection and removal, quality filtering (Phred score ≥ 15), and removal of reads shorter than 15 bp. Per-sample HTML and JSON quality reports were generated for inspection. All code is provided in `scripts/01_fastp.sh`.
+Raw reads were assessed and trimmed using fastp (v1.3.0; Chen et al., 2018). fastp was run on paired-end reads with automatic adapter detection and removal, quality filtering (Phred score ≥ 20), and removal of reads shorter than 50 bp. Overlap-based error correction of paired-end reads was enabled via the --correction flag. Per-sample HTML and JSON quality reports were generated for inspection. All code is provided in `scripts/01_fastp.sh`.
 
 ## Taxonomic Classification
 
