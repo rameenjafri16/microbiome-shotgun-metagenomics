@@ -108,6 +108,8 @@ The hierarchical clustering of species-level relative abundance across all 30 mo
 
 **Figure 3. Heatmap of the top 30 most abundant species across all six samples.** Values represent log10-transformed relative abundance. Both rows (species) and columns (samples) are hierarchically clustered using complete linkage. The annotation bar indicates dietary group assignment. Darker blue indicates higher relative abundance.
 
+Hierarchical taxonomic composition from kingdom to species level is additionally visualised for all six samples as interactive Krona charts (Ondov et al., 2011), provided as Supplementary File 1 (results/krona/krona_all_samples.html). A static overview of the Krona charts across all samples is shown in Supplementary Figure 1. Both representations confirm the dominance of Bacteroidota and Firmicutes across all samples, and the variable Segatella copri abundance observed in the species-level analyses.
+
 ## Alpha Diversity
 
 Observed species richness, Shannon diversity, and Simpson's diversity index were calculated for each sample (Figure 4). Vegan samples showed a trend toward higher diversity across all three metrics: median observed richness was 3,008 (range: 1,344–4,481) in vegans versus 1,896 (range: 1,871–2,609) in omnivores; median Shannon diversity was 3.60 (range: 1.82–4.16) versus 2.65 (range: 1.46–3.18); and median Simpson's index was 0.935 (range: 0.586–0.961) versus 0.793 (range: 0.460–0.887). None of these differences reached statistical significance by Wilcoxon rank-sum test (Observed richness: W = 3, p = 0.7; Shannon diversity: W = 2, p = 0.4). Vegan_2 and Omnivore_3 had the lowest diversity values within their respective groups, with Shannon diversity of 1.82 and 1.46 respectively.
@@ -180,6 +182,18 @@ Among the 22 remaining significant taxa with |LFC| < 1, nine *Fusobacterium* spe
 | *Alistipes megaguti* | −4.59 | 1.61 × 10⁻² | Omnivore | Yes |
 | *Ruminococcus callidus* | −5.46 | 7.07 × 10⁻⁴ | Omnivore | Yes |
 
+## Supplementary Figures
+
+<img width="2220" height="1169" alt="krona_grid" src="https://github.com/user-attachments/assets/b807bd08-dd75-4039-970d-3ebf7c834ed0" />
+
+Individual plots:
+<img width="900" height="900" alt="krona_vegan1" src="https://github.com/user-attachments/assets/2a148f07-7448-4c5d-a4d9-086772d5c5f9" />
+<img width="900" height="900" alt="krona_vegan2" src="https://github.com/user-attachments/assets/98561705-0fd7-486c-af9a-8cfd31cddb03" />
+<img width="900" height="900" alt="krona_vegan3" src="https://github.com/user-attachments/assets/3960dcf4-eecf-4366-8d57-898a7af79b36" />
+<img width="900" height="900" alt="krona_omni1" src="https://github.com/user-attachments/assets/7d32f0fc-8253-4574-b8a4-48d3803efb94" />
+<img width="900" height="900" alt="krona_omni2" src="https://github.com/user-attachments/assets/643787e4-3bae-485b-9099-60797be44714" />
+<img width="900" height="900" alt="krona_omni3" src="https://github.com/user-attachments/assets/f4a78006-8f9b-4a1e-85b7-e3df2f8891a2" />
+
 
 ## References
 
@@ -196,6 +210,7 @@ Among the 22 remaining significant taxa with |LFC| < 1, nine *Fusobacterium* spe
 - Mallick, H., et al. (2021). Multivariable association discovery in population-scale meta-omics studies. *PLOS Computational Biology*, 17(11), e1009442.
 - McMurdie, P.J., & Holmes, S. (2013). phyloseq: An R package for reproducible interactive analysis and graphics of microbiome census data. *PLOS ONE*, 8(4), e61217.
 - McMurdie, P.J., & Holmes, S. (2014). Waste not, want not: why rarefying microbiome data is inadmissible. *PLOS Computational Biology*, 10(4), e1003531.
+- Ondov, B.D., Bergman, N.H., & Phillippy, A.M. (2011). Interactive metagenomic visualization in a Web browser. BMC Bioinformatics, 12, 385.
 - Oksanen, J., et al. (2022). vegan: Community Ecology Package. R package version 2.6-2.
 - Quince, C., Walker, A.W., Simpson, J.T., Loman, N.J., & Segata, N. (2017). Shotgun metagenomics, from sampling to analysis. *Nature Biotechnology*, 35, 833–844.
 - Sonnenburg, J.L., & Bäckhed, F. (2016). Diet–microbiota interactions as moderators of human metabolism. *Nature*, 535, 56–64.
