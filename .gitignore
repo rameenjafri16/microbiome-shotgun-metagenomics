@@ -29,5 +29,5 @@ results/krona/krona_all_samples.html.files
 data/bracken/
 data/kraken2/
 data/*.csv
-figures/krona/
+figures/krona_*
 */place.txt
