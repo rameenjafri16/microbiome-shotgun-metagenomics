@@ -1,0 +1,24 @@
+# making krona plot, installation + generation 
+# march 23 2026 
+# rameen jafri 
+
+# installation
+conda install -c bioconda krona -y
+
+# update taxonomy
+ktUpdateTaxonomy.sh
+
+mkdir -p results/krona
+
+ktImportTaxonomy \
+  -t 5 -m 3 \
+  -o results/krona/krona_all_samples.html \
+  results/kraken2/SRR8146968.report,Vegan_1 \
+  results/kraken2/SRR8146978.report,Vegan_2 \
+  results/kraken2/SRR8146982.report,Vegan_3 \
+  results/kraken2/SRR8146935.report,Omnivore_1 \
+  results/kraken2/SRR8146936.report,Omnivore_2 \
+  results/kraken2/SRR8146938.report,Omnivore_3
+
+# to open
+open results/krona/krona_all_samples.html
