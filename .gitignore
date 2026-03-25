@@ -24,3 +24,10 @@ results/krona/*.html.files/
 .DS_Store
 results/krona/krona_all_samples.html.files/
 results/krona/*.js
+results/krona/krona_all_samples.html.files
+*.svg
+data/bracken/
+data/kraken2/
+data/*.csv
+figures/krona/
+*/place.txt
