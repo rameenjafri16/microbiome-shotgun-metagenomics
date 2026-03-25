@@ -1,0 +1,78 @@
+for SRR in SRR8146951 SRR8146960 SRR8146955 SRR8146957 SRR8146956 SRR6367592; do
+  echo "Downloading $SRR..."
+  prefetch $SRR
+  fasterq-dump --split-files --progress $SRR
+  gzip ${SRR}_1.fastq ${SRR}_2.fastq
+  echo "Done: $SRR"
+done
+
+
+
+
+ideally, 3 vegans 2 omni, all from turin
+
+completed:
+SRR8146951 (vegan, Bari)
+SRR8146960 (vegan, Parma)
+
+not done:
+SRR8146955 (vegan, Parma)
+
+whats running
+SRR8146956 (omni, Bari)
+SRR6367592 (omni, Turin)
+SRR8146965 (vegan, Bari)
+
+SRR8146957 (omni, Bari)
+
+
+these are all from turin
+
+SRR8146968 (vegan) 12.6G	5.6Gb
+SRR8146978 (vegan)	12.3G	4.9Gb
+SRR8146982 (vegan)	13G	5.1Gb
+SRR8146938 (omni) 13.7G	5.5Gb
+SRR8146935 (omni) 12G	4.9Gb
+SRR8146936 (omni) 11.5G	4.6Gb
+
+for SRR in SRR8146968 SRR8146978 SRR8146982 SRR8146938 SRR8146935 SRR8146936; do
+  echo "Downloading $SRR..."
+  prefetch $SRR
+  fasterq-dump --split-files --progress $SRR
+  gzip ${SRR}_1.fastq ${SRR}_2.fastq
+  echo "Done: $SRR"
+done
+
+
+download_srr() {
+  SRR=$1
+  echo "Downloading $SRR..."
+  prefetch $SRR
+  fasterq-dump --split-files --progress --threads 4 $SRR
+  gzip ${SRR}_1.fastq ${SRR}_2.fastq
+  echo "Done: $SRR"
+}
+export -f download_srr
+
+parallel -j 3 'echo "Downloading {}"
+prefetch {}
+fasterq-dump --split-files --progress --threads 4 {}
+gzip {}_1.fastq {}_2.fastq
+echo "Done: {}"' ::: SRR8146968 SRR8146978 SRR8146982 SRR8146938 SRR8146935 SRR8146936
+
+
+
+# Option 1: pigz (parallel gzip, uses all cores per file)
+conda install -c conda-forge pigz -y
+pigz SRR8146968_1.fastq SRR8146968_2.fastq \
+     SRR8146978_1.fastq SRR8146978_2.fastq \
+     SRR8146982_1.fastq SRR8146982_2.fastq
+
+
+things
+fastp download:
+# note: the fastp version in bioconda may be not the latest
+conda install -c bioconda fastp
+
+fastp usage:
+fastp -i in.R1.fq.gz -I in.R2.fq.gz -o out.R1.fq.gz -O out.R2.fq.gz

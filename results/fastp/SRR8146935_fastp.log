@@ -1,0 +1,56 @@
+Detecting adapter sequence for read1...
+>Illumina TruSeq Adapter Read 1
+AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
+
+Detecting adapter sequence for read2...
+>Illumina TruSeq Adapter Read 2
+AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
+
+Read1 before filtering:
+total reads: 40058723
+total bases: 6008808324
+Q20 bases: 5823287633(96.9125%)
+Q30 bases: 5519373871(91.8547%)
+Q40 bases: 4401465646(73.2502%)
+
+Read2 before filtering:
+total reads: 40058723
+total bases: 6008808343
+Q20 bases: 5652819510(94.0756%)
+Q30 bases: 5210825691(86.7198%)
+Q40 bases: 3902836784(64.9519%)
+
+Read1 after filtering:
+total reads: 39137854
+total bases: 5856856104
+Q20 bases: 5701056393(97.3399%)
+Q30 bases: 5426545662(92.6529%)
+Q40 bases: 4356517271(74.3832%)
+
+Read2 after filtering:
+total reads: 39137854
+total bases: 5856747776
+Q20 bases: 5570634270(95.1148%)
+Q30 bases: 5164704042(88.1838%)
+Q40 bases: 3886338808(66.3566%)
+
+Filtering result:
+reads passed filter: 78275708
+reads failed due to low quality: 1797368
+reads failed due to too many N: 17510
+reads failed due to too short: 24742
+reads failed due to adapter dimer: 2118
+reads with adapter trimmed: 1241461
+bases trimmed due to adapters: 30775485
+reads corrected by overlap analysis: 2237304
+bases corrected by overlap analysis: 3504586
+
+Duplication rate: 0.00298312%
+
+Insert size peak (evaluated by paired-end reads): 268
+
+JSON report: results/fastp/SRR8146935_fastp.json
+HTML report: results/fastp/SRR8146935_fastp.html
+
+fastp --in1 data/SRR8146935_1.fastq.gz --in2 data/SRR8146935_2.fastq.gz --out1 results/fastp/SRR8146935_1_trimmed.fastq.gz --out2 results/fastp/SRR8146935_2_trimmed.fastq.gz --html results/fastp/SRR8146935_fastp.html --json results/fastp/SRR8146935_fastp.json --thread 4 --detect_adapter_for_pe --qualified_quality_phred 20 --length_required 50 --correction 
+fastp v1.3.0, time used: 218 seconds

@@ -1,0 +1,26 @@
+# Raw sequencing data
+data/*.fastq.gz
+data/**/*.fastq.gz
+*.sra
+*.sra.tmp
+*.sra.prf
+*.sra.lock
+fasterq.tmp*/
+
+# Trimmed reads
+results/fastp/*.fastq.gz
+
+# Kraken2 large outputs
+results/kraken2/*.kraken
+
+# Krona JS files (too large)
+results/krona/*.html.files/
+
+# Database files
+*.k2d
+*.kmer_distrib
+
+# Mac junk
+.DS_Store
+results/krona/krona_all_samples.html.files/
+results/krona/*.js
