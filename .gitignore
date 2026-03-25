@@ -31,3 +31,6 @@ data/kraken2/
 data/*.csv
 figures/krona_*
 */place.txt
+figures/krona_*.png
+figures/krona_*.svg
+figures/place.txt
