@@ -40,7 +40,7 @@ Species-level abundance was re-estimated from Kraken2 output using Bracken (v3.0
 
 ## Diversity Analysis and Visualization
 
-All downstream analyses were performed in R (VERSION). Bracken output was imported and formatted into a phyloseq object (McMurdie & Holmes, 2013) with associated sample metadata indicating dietary group (vegan or omnivore). Upon inspection of the combined Bracken abundance table, species-level taxonomic labels were too numerous for interpretable visualization (>400 taxa per sample); accordingly, species were aggregated to phylum level using genus-level keyword matching against established gut microbiome taxonomy for the taxonomic abundance figure.
+All downstream analyses were performed in R (v4.5.2). Bracken output was imported and formatted into a phyloseq object (McMurdie & Holmes, 2013) with associated sample metadata indicating dietary group (vegan or omnivore). Upon inspection of the combined Bracken abundance table, species-level taxonomic labels were too numerous for interpretable visualization (>400 taxa per sample); accordingly, species were aggregated to phylum level using genus-level keyword matching against established gut microbiome taxonomy for the taxonomic abundance figure.
 
 Taxonomic abundance was visualized as a stacked bar plot of relative abundance at the phylum level across all samples using ggplot2 (Wickham, 2016).
 
