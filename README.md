@@ -237,13 +237,7 @@ This analysis of six Italian gut metagenomes confirms that *Segatella copri* ent
 
 <img width="2220" height="1169" alt="krona_grid" src="https://github.com/user-attachments/assets/b807bd08-dd75-4039-970d-3ebf7c834ed0" />
 
-Individual plots:
-<img width="900" height="900" alt="krona_vegan1" src="https://github.com/user-attachments/assets/2a148f07-7448-4c5d-a4d9-086772d5c5f9" />
-<img width="900" height="900" alt="krona_vegan2" src="https://github.com/user-attachments/assets/98561705-0fd7-486c-af9a-8cfd31cddb03" />
-<img width="900" height="900" alt="krona_vegan3" src="https://github.com/user-attachments/assets/3960dcf4-eecf-4366-8d57-898a7af79b36" />
-<img width="900" height="900" alt="krona_omni1" src="https://github.com/user-attachments/assets/7d32f0fc-8253-4574-b8a4-48d3803efb94" />
-<img width="900" height="900" alt="krona_omni2" src="https://github.com/user-attachments/assets/643787e4-3bae-485b-9099-60797be44714" />
-<img width="900" height="900" alt="krona_omni3" src="https://github.com/user-attachments/assets/f4a78006-8f9b-4a1e-85b7-e3df2f8891a2" />
+Individual plots available in figures/krona. 
 
 
 ## References
