@@ -1,5 +1,27 @@
 # microbiome-shotgun-metagenomics
 
+This repository contains a shotgun metagenomics pipeline comparing the gut microbiome composition of three vegan and three omnivore individuals using publicly available data from De Filippis et al. (2019) (NCBI SRA: SRP126540). The pipeline covers read quality control, taxonomic classification, diversity analysis, and differential abundance testing, with all scripts, results, and figures available in this repository.
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Methods](#methods)
+  - [Tool Justification](#tool-justification)
+  - [Data Source](#data-source)
+  - [Quality Control and Adapter Trimming](#quality-control-and-adapter-trimming)
+  - [Taxonomic Classification](#taxonomic-classification)
+  - [Abundance Re-estimation](#abundance-re-estimation)
+  - [Diversity Analysis and Visualization](#diversity-analysis-and-visualization)
+  - [Differential Abundance Analysis](#differential-abundance-analysis)
+- [Results](#results)
+- [Discussion](#discussion)
+- [Limitations](#limitations)
+- [Conclusions](#conclusions)
+- [Supplementary Figures](#supplementary-figures)
+- [Software Versions](#software-versions)
+- [Data Availability](#data-availability)
+- [References](#references)
+
 # Introduction
 
 Diet is one of the most important determinants of gut microbiome composition. Long-term dietary patterns produce distinct and reproducible microbial signatures, with omnivore-associated microbiomes enriched in taxa involved in protein and fat metabolism, and plant-based microbiomes enriched in fiber-degrading bacteria that produce short-chain fatty acids (SCFAs) such as butyrate (Sonnenburg & Bäckhed, 2016; Fackelmann et al., 2025). De Filippis et al. (2019) characterized the gut metagenomes of 97 Italian adults following omnivore, vegetarian, or vegan diets, demonstrating that dietary habit drives strain-level selection in key taxa such as *Prevotella copri*, with vegan-associated strains enriched in genes for complex carbohydrate degradation and omnivore-associated strains showing higher prevalence of branched-chain amino acid (BCAA) biosynthesis genes linked to insulin resistance and type 2 diabetes risk. The raw sequencing data from this cohort (NCBI SRA: SRP126540) provides the foundation for the present analysis.
